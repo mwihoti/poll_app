@@ -1,4 +1,4 @@
-<form action="{% url 'pollapp:vote' question_id %}" method="post">
+<form action="{% url 'pollapp:vote' question.id %}" method="post">
 {% csrf_token %}
 <fieldset>
     <legend>
