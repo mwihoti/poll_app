@@ -29,12 +29,12 @@ class QuestionModelTests(TestCase):
         recent_question = Question(pub_date=time)
         self.assertIs(recent_question.was_published_recently(), True)
     
-    def create_question(question_text, days):
-        """"
-        create question with the given question_text and published the given number of days
-        """
-        time = timezone.now() + datetime.timedelta(days=days)
-        return Question.objects.create(question_text=question_text, pub_date=time)
+def create_question(question_text, days):
+    """"
+    create question with the given question_text and published the given number of days
+    """
+    time = timezone.now() + datetime.timedelta(days=days)
+    return Question.objects.create(question_text=question_text, pub_date=time)
 
 class QuestionIndexViewTests(TestCase):
     def test_no_questions(self):
@@ -84,3 +84,13 @@ class QuestionIndexViewTests(TestCase):
             response.context["latest_question_list"],
             [question1, question2]
         )
+
+class QuestionDetailViewTests(TestCase):
+    def test_future_question(self):
+        """"
+        Detail view of a question with a pub_date in the future returns a 404 error
+        """
+        future_question = create_question(question_text="Future Question", days=5)
+        url = reverse("polls:detail", args=(future_question.id,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
