@@ -4,5 +4,18 @@ from django.contrib import admin
 from .models import Question
 from .models import Choice
 
-admin.site.register(Question)
-admin.site.register(Choice)
+
+class ChoiceInline(admin.TabularInline):
+    model = Choice
+    extra = 3
+
+class QuestionAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {"fields": ["question_txt"]}),
+        ("Date information", {"fields": ["pub_date"]})
+        
+        ]
+    inlines =  [ChoiceInline]
+    list_display = ["question_txt", "pub_date", "was_published_recently"]
+
+admin.site.register(Question, QuestionAdmin)
